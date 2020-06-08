@@ -10,68 +10,67 @@ _:
 string  db '     ', 13,10,'$'
 start:
 
-	mov bx, [0:41Ah] ;get head
-	mov cx, [0:41Ch] ;get tail
+	mov bx, [0:41Ah] ; get head
+	mov cx, [0:41Ch] ; get tail
 	cmp cx, bx	
-	je start
+	je start		 ; условный переход 
 
-	mov ah, 00h	;get next key
-	int 16h		;
+	mov ah, 00h		 ; get next key
+	int 16h			
 
-	mov cx, ax	;save ax to cx (ascii symbol)
+	mov cx, ax		 ; сохраняем ax в cx (ascii symbol)
 
 	lea di, string	
-	mov bl, ah 	;scan-code
-	call h2		;convert scan-code to char
+	mov bl, ah 		 ; scan-code
+	call h2			 ; конверт scan-code в char
 
-	mov ax, cx	;return old ax value
-			;to get ascii symbol
+	mov ax, cx		 ; возвращаем старое значение ax
+					 ; чтобы получить ascii символ
 
-	cmp al, 1Bh 	;escape
+	cmp al, 1Bh 	 ; escape
 	je exit
-	cmp al, 24h	;$
+	cmp al, 24h		 ; $
 	jne print
-	mov al, 53h	;convert $ to S and not mark buffer as read
+	mov al, 53h	 	 ; конвертируем $ в S и помечаем buffer как прочитанный
 
 print:
-	inc di	;space to write ascii symbol
-	stosb	;write al (ascii symbol) to adress di
+	inc di				; space to write ascii symbol
+	stosb				; записываем al (ascii symbol) в адресс di
 
-	mov ah, 09h	;
-	lea dx, string	; print string
-	int 21h		;
+	mov ah, 09h	
+	lea dx, string		; выводим строку
+	int 21h		
 
-	cli	; ignore interrupts
+	cli					; игнорируем прерывания
 
-	push es	; save es  
-	push 0	; es := 0
-	pop es	;
+	push es				; сохраняем es  
+	push 0				; es := 0
+	pop es	
 
-	mov al, es:[41Ah] ;  
-	mov es:[41Ch], al ; tale := head
+	mov al, es:[41Ah]   
+	mov es:[41Ch], al	; tale := head
 
-	pop es	; return old es value
+	pop es				; возвращаем прошлое значение es
 
-	sti	; un-ignore interrupts
+	sti					; un-ignore interrupts
 
 	jmp start
 
 h2: 
-	mov al, bl ; bl = ah = scan-code
+	mov al, bl	; bl = ah = scan-code
 
-	shr al, 4  ; al = high nibble
+	shr al, 4 	; al = high nibble
 	call h1
 
-	mov al, bl ; al = low nibble
+	mov al, bl	; al = low nibble
 
 h1:
-	; DI - start of string
-
-	and ax, 0fh ; ah = last nibble
-	cmp al, 10  ; check if its letter or number (10 = 0Ah)
+				; DI - начальная строка
+	and ax, 0fh	; ah = last nibble
+	cmp al, 10 	; проверяем это буква или цифра (10 = 0Ah)
 	sbb al, 69h ; al = al - (69h + CF)
-	das	    ; 
-	stosb	    ; store AL as ES:DI
+	das	    
+	stosb	    ; сохраняем AL как ES:DI
 	
 exit:   ret
 end _	
