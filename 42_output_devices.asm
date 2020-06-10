@@ -12,26 +12,26 @@ vend_n	db "0000"
 dev_n	db "0000"
 shift	db "0000",13,10,'$'
 enter	db "-----------------------------------------------",13,10,'$'
-string	db "                                                                                ",'$'
+string	db "                                               ",'$'
 
 start:
 	xor ecx, ecx
 bus_lp:
-;----------------------------
+
 	mov eax, 80000000h	
 	shl ecx, 8
-	or eax, ecx		;add bus number
-	shr ecx, 8		;to needed pistion
+	or eax, ecx			; добавляем номер шины
+	shr ecx, 8			; на нужную позицию
 
-	mov dx, 0cf8h		;0cf8h - PCI Index
-	out dx, eax		;request PCI for data
+	mov dx, 0cf8h		; 0cf8h - PCI Index
+	out dx, eax			; запрос к PCI за данными
 
-	mov dx, 0cfch		; read data from port
-	in eax, dx		; 0cfch - PCI DATA
+	mov dx, 0cfch		; чтение данных через порт
+	in eax, dx			; 0cfch - PCI DATA
 
-	cmp eax, 0FFFFFFFFh	;cmp with -1
+	cmp eax, 0FFFFFFFFh	; сравниваем с -1 
 	je skip
-;----------------------------
+
 
 	;fill vend name
 	mov ebx, eax
