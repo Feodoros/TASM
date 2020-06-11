@@ -14,7 +14,7 @@ outmes	db	"0000:0000",13,10,"$"
 old_int1_offset	dw	0
 old_int1_cs	dw	0
 
-int1_handler:
+int1_handler:	; в bp кладем начальное состояние стека
 	push	bp 	; вносим bp (base pointer) в стек 
 	mov	bp, sp  ; копируем содержимое stack-pointer(sp) в bp 
 
@@ -29,9 +29,9 @@ int1_handler:
 	lea	di, outmes		; di = outmes
 	mov	bx, [bp+4]		; копируем содержимое [bp+4] в bx (base register), cs to print
 	call	h4
-	lea	di, [outmes+5]	 
+	lea	di, [outmes+5]  	 
 	mov	bx, [bp+2]		; ip to print
-	call	h4 			; вызов процедуры h4	
+	call	h4 			; вызов процедуры h4, записывает 4 байта в памяти	
 
 	lea	dx, outmes  	; dx (data register)
 	mov	ah, 09h     	; ah -- AX (primary accumulator) high, 09h -- вывод строки
@@ -42,6 +42,8 @@ int1_handler:
 
 	pop	bp
 	iret		   		; возврат из прерывания при 16-битном размере операнда
+	; передаем управление следующей команде в HelloASM
+	; возвращаемся к программе
 
 start:
 	mov	ax, 3D00h	; открываем файл
@@ -57,6 +59,7 @@ start:
 	mov	ah, 3Eh		; закрываем файл
 	int	21h
 
+	; Переписывание обработчика
 	mov	ah, 35h		; сохраянем прошлое прерывание 
 	mov	al, 1
 	int	21h
@@ -71,6 +74,7 @@ start:
 	pop	dx
 	or	dx, 100h	; TF := 1	
 
+	; Подготавливаем стек для передачи управления другой программе
 	mov	bx, 100h
 
 	lea	cx, psp
@@ -82,6 +86,7 @@ start:
 	push	ax
 	pop	ds
 
+    ; Подготовка стека, когда мы выходим из программы, для получения управления
 	pushf
 	push	cs				; адресс вызываемой программы
 	lea	cx, after_debug		; to return to
@@ -92,7 +97,7 @@ start:
 	push	dx				; called flags
 	push	ax				; code segment
 	push	bx				; 100 - ip 
-	iret
+	iret					; извлекает из стека cs, ip, регистр флагов
 
 after_debug:
 	push	cs
