@@ -5,7 +5,7 @@
 	org	100h
 _:	
 	jmp	start
-filename db	"helloasm.com",0
+filename db	"hw.com",0
 errmes	db	"Error",13,10,"$"
 finish	db	"Finish",13,10,"$"
 outmes	db	"0000:0000",13,10,"$"

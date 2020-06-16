@@ -6,7 +6,6 @@
 	org	100h
 _:	
 	jmp	start
-kek	db	'$$$$$'
 filename db	"hw.com",0
 errmes	db	"Error",13,10,"$"
 finish	db	"Finish",13,10,"$"
