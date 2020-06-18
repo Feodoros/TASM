@@ -8,8 +8,11 @@ start:
 scan 	db 'scan:__',13,10,'$'
 code 	db 0
 int9handler:
+
+	; порты 
+	
 	sti		; clock don't lose tacts 
-			; becuase keyboard interrupt more slow than proc
+			; becuase keyboard interrupt more slow than CPU
 			; enable int
 	pusha
 	push ds
