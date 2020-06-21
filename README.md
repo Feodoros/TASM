@@ -1,5 +1,5 @@
 # TASM
-Assembler homeworks (for DOS)
+Assembler homeworks.
 
 ### Tasks:
 - HW1:  [Loader with ASCII table](https://github.com/Feodoros/TASM/blob/master/1_ascii.asm)
