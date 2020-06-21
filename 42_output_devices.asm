@@ -14,20 +14,24 @@ shift	db "0000",13,10,'$'
 enter	db "-----------------------------------------------",13,10,'$'
 string	db "                                               ",'$'
 
+; адресация портов PCI + как работать 
+
 start:
 	xor ecx, ecx
 bus_lp:
 
-	mov eax, 80000000h	
-	shl ecx, 8
+    ; osdev
+	mov eax, 80000000h	; 
+	shl ecx, 8			; в ecx лежит номер шины 
+	
 	or eax, ecx			; добавляем номер шины
 	shr ecx, 8			; на нужную позицию
 
-	mov dx, 0cf8h		; 0cf8h - PCI Index
+	mov dx, 0cf8h		; 0cf8h - CONFIG_ADDRESS
 	out dx, eax			; запрос к PCI за данными
 
 	mov dx, 0cfch		; чтение данных через порт
-	in eax, dx			; 0cfch - PCI DATA
+	in eax, dx			; 0cfch - CONFIG_DATA
 
 	cmp eax, 0FFFFFFFFh	; сравниваем с -1 
 	je skip
