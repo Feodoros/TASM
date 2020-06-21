@@ -14,4 +14,4 @@ Assembler homeworks (for DOS)
 ### Floppys [here](https://github.com/Feodoros/TASM/tree/master/floppys)
 
 ## Gratitudes:
-- @ArtyomAfanasov
+- [@ArtyomAfanasov](https://github.com/ArtyomAfanasov)
